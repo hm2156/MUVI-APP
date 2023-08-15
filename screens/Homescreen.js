@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View , TouchableOpacity, ScrollView} from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { Octicons } from '@expo/vector-icons';
@@ -9,13 +9,40 @@ import { useState } from 'react';
 import MovieList from '../components/MovieList';
 import { useNavigation } from '@react-navigation/native';
 import Loading from '../components/Loading';
+import { fetchTopRatedMovies, fetchTrendingMovies, fetchUpcomingMovies } from '../api/moviedb';
 
 const Homescreen = () => {
-    const[trending,setTrending]=useState([1,2,3])
-    const[upcoming,setUpcoming]=useState([1,2,3])
-    const[topRated,setTopRated]=useState([1,2,3])
-    const[loading,setLoading]=useState(false)
+    const[trending,setTrending]=useState([])
+    const[upcoming,setUpcoming]=useState([])
+    const[topRated,setTopRated]=useState([])
+    const[loading,setLoading]=useState(true)
     const navigation=useNavigation()
+    useEffect(()=>{
+      getTrendingMovies();
+      getUpcomingMovies();
+      getTopRatedMovies();
+    },[])
+   const getTrendingMovies = async()=>{
+      const data = await fetchTrendingMovies()
+      if (data && data.results) {
+        setTrending(data.results)
+      }
+      setLoading(false)
+   }
+
+   const getUpcomingMovies = async()=>{
+    const data = await fetchUpcomingMovies()
+    if (data && data.results) {
+      setUpcoming(data.results)
+    }
+  }
+
+ const getTopRatedMovies = async()=>{
+  const data = await fetchTopRatedMovies()
+  if (data && data.results) {
+    setTopRated(data.results)
+  }
+}
   return (
     <View style={styles.container}>
         {/*  search bar and logo*/}
@@ -39,7 +66,7 @@ const Homescreen = () => {
             contentContainerStyle={{paddingBottom:10}}
             >
               {/*  trending movies carousel */}
-              <Trendingmovie data={trending} />
+              { trending.length>0 && <Trendingmovie data={trending} />}
               {/*  upcoming new movies carousel */}
               <MovieList title="Upcoming movies" data={upcoming}/>
               <MovieList title="Top Rated movies " data={topRated}/>

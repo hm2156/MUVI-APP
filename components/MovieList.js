@@ -1,6 +1,7 @@
 import { View, Text , StyleSheet, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Image, Dimensions} from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { fallbackMoviePoster, image185 } from '../api/moviedb'
 
 
 var{width,height}= Dimensions.get('window')
@@ -34,10 +35,10 @@ export default function MovieList({title,data, hideSeeAll}) {
                         onPress={()=> navigation.push("Movie", item)}
                    >
                         <View style={styles.movieimg}>
-                            <Image source={require('../assets/pics/moviePoster2.png')}  style={styles.poster}/>
+                            <Image source={{uri: image185(item.poster_path) || fallbackMoviePoster}}  style={styles.poster}/>
                             <Text style={{ color: 'white'}}> 
                             {
-                                moviename.length>14?moviename.slice(0,14)+'...':moviename
+                                item.title.length>14?item.title.slice(0,14)+'...':item.title
                             } 
                             </Text>
                         </View>
